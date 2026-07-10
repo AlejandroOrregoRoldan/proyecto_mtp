@@ -1,0 +1,12 @@
+steps:
+  # Paso 1: Construir la imagen de Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/mi-proyecto/mtp-app', '.']
+
+  # Paso 2: Subir la imagen a la nube
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/mi-proyecto/mtp-app']
+
+  # Paso 3: Desplegar en Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args: ['gcloud', 'run', 'deploy', 'mtp-app', '--image', 'gcr.io/mi-proyecto/mtp-app']
