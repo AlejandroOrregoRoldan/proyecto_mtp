@@ -22,6 +22,6 @@ datos = {
 
 # Convertimos a Pandas y guardamos el CSV
 df = pd.DataFrame(datos)
-df.to_csv("maestro_cuentas.csv", index=False)
+df.to_csv("data/maestro_cuentas.csv", index=False)
 
-print(f"¡Éxito! Se ha creado el archivo 'maestro_cuentas.csv' con {cantidad} filas.")
+print(f"¡Éxito! Se ha creado el archivo 'data/maestro_cuentas.csv' con {cantidad} filas.")

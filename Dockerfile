@@ -24,4 +24,4 @@ EXPOSE 8501
 # --server.fileWatcherType=poll fuerza a Streamlit a detectar cambios mediante polling
 # en lugar de inotify. Necesario para que el hot-reload funcione con volúmenes
 # montados desde Windows a través de WSL2.
-CMD ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.fileWatcherType=poll"]
+CMD ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.fileWatcherType=poll"]

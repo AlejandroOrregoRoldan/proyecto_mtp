@@ -7,7 +7,7 @@ from datetime import datetime
 def obtener_metricas_maestro():
     try:
         # 1. Leer el archivo CSV real (Simulando la lectura de BigQuery)
-        df = pd.read_csv("maestro_cuentas.csv")
+        df = pd.read_csv("data/maestro_cuentas.csv")
         
         # 2. Procesamiento con Pandas:
         # Contamos cuántas filas (cuentas) hay en total
@@ -40,7 +40,7 @@ def obtener_metricas_maestro():
 @st.cache_data
 def obtener_consolidado_areas():
     try:
-        df = pd.read_csv("maestro_cuentas.csv")
+        df = pd.read_csv("data/maestro_cuentas.csv")
         
         # Agrupamos por área y sumamos el presupuesto
         consolidado = df.groupby("Area")["Presupuesto_Solicitado"].sum().reset_index()
