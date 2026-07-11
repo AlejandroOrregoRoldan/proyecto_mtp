@@ -1,0 +1,6 @@
+correo,estado,rol
+admin@proteccion.com,Aprobado,Admin
+operador@proteccion.com,Aprobado,Operador
+lector@proteccion.com,Aprobado,Lector
+pendiente@proteccion.com,Pendiente,Lector
+rechazado@proteccion.com,Rechazado,Operador

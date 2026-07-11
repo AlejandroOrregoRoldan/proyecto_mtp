@@ -11,6 +11,11 @@ import pandas as pd
 from data_engine import obtener_metricas_maestro, obtener_consolidado_areas
 from components.widgets import render_kpi_row
 from components.maestro_cuentas import render_maestro_cuentas
+from components.auth import (
+    usuario_es_admin,
+    usuario_es_lector,
+)
+from components.admin_panel import render_admin_panel
 
 
 # ---------------------------------------------------------------------------
@@ -55,6 +60,31 @@ def render_areas() -> None:
 def render_presupuesto() -> None:
     """Captura y revisión de presupuestos por área."""
     st.title("💰 Presupuesto")
+
+    # --- Solicitar sincronización a BigQuery (protegido por rol) ---
+    st.subheader("🔄 Sincronización BigQuery")
+
+    es_lector = usuario_es_lector()
+
+    if es_lector:
+        st.warning(
+            "🔒 Tu rol actual (**Lector**) no tiene permisos para solicitar "
+            "sincronizaciones. Contacta a un Administrador u Operador."
+        )
+
+    st.button(
+        "🔄 Solicitar Sincronización a BigQuery",
+        type="primary",
+        disabled=es_lector,
+        use_container_width=True,
+        help=(
+            "No tienes permisos para ejecutar esta acción (requiere rol Admin u Operador)."
+            if es_lector
+            else "Envía los datos actuales del maestro a BigQuery."
+        ),
+    )
+
+    st.divider()
     st.info("Módulo en construcción — carga y revisión de cifras presupuestales por área.")
 
 
@@ -105,13 +135,25 @@ def render_consolidacion() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Router: diccionario que mapea nombre de página → función render
+# Pestaña: Panel de Administración  (→ app/components/admin_panel.py)
+# Solo visible para Admin.
 # ---------------------------------------------------------------------------
-TAB_ROUTER = {
-    "Inicio":               render_inicio,
-    "Maestro de Cuentas":   render_maestro_cuentas,
-    "Áreas":                render_areas,
-    "Presupuesto":          render_presupuesto,
-    "Historial":            render_historial,
-    "Consolidación":        render_consolidacion,
-}
+
+
+# ---------------------------------------------------------------------------
+# Router: diccionario dinámico que mapea nombre de página → función render.
+# La pestaña «Panel de Administración» solo se incluye si el usuario es Admin.
+# ---------------------------------------------------------------------------
+def get_tab_router() -> dict:
+    """Retorna el diccionario de enrutamiento según el rol del usuario activo."""
+    rutas = {
+        "Inicio":               render_inicio,
+        "Maestro de Cuentas":   render_maestro_cuentas,
+        "Áreas":                render_areas,
+        "Presupuesto":          render_presupuesto,
+        "Historial":            render_historial,
+        "Consolidación":        render_consolidacion,
+    }
+    if usuario_es_admin():
+        rutas["Panel de Administración"] = render_admin_panel
+    return rutas

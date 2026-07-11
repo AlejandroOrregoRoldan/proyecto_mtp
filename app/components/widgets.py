@@ -5,10 +5,15 @@ Sidebar, tarjetas de métricas, y otros componentes compuestos.
 
 import streamlit as st
 
+from components.auth import render_login_selector, usuario_es_admin
+
 
 def render_sidebar() -> str:
     """
     Construye el menú lateral completo y retorna la página seleccionada.
+
+    El selector de usuario (simulador IAP) se renderiza aquí para que
+    aparezca en la posición correcta del sidebar, entre el logo y el menú.
 
     Returns
     -------
@@ -17,6 +22,9 @@ def render_sidebar() -> str:
     """
     # Logo corporativo
     st.sidebar.image("assets/logo.png", use_column_width=True)
+
+    # Simulador de sesión RBAC (reemplaza IAP en desarrollo)
+    render_login_selector()
 
     # Navegación principal
     st.sidebar.title("Navegación")
@@ -28,6 +36,11 @@ def render_sidebar() -> str:
         "Historial",
         "Consolidación",
     ]
+
+    # Los administradores ven una pestaña extra para gestionar accesos
+    if usuario_es_admin():
+        paginas.append("Panel de Administración")
+
     seleccion = st.sidebar.radio("Menú", paginas)
 
     # Botón de recarga y pie

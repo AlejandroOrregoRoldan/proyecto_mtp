@@ -1,27 +1,68 @@
-import pandas as pd
+"""
+Generador de datos simulados para el Maestro de Cuentas MTP.
+
+Genera 50,000 registros con estructura financiera realista y
+los exporta como archivo Parquet (formato columnar comprimido,
+compatible con la arquitectura de producción en GCS/BigQuery).
+"""
+
 import random
+from pathlib import Path
 
-print("Generando datos masivos, por favor espera...")
+import pandas as pd
 
-# Listas de opciones reales para una empresa financiera
-areas = ["Finanzas", "Recursos Humanos", "Tecnología", "Marketing", "Operaciones", "Riesgos", "Legal", "Servicio al Cliente", "Comercial", "Auditoría"]
-estados = ["Enviado", "Pendiente", "Rechazado", "En Revisión"]
-tipos_cuenta = ["Fondo Voluntario", "Cesantías", "Pensión Obligatoria", "Nómina", "Inversión", "Infraestructura", "Licencias"]
+# ---------------------------------------------------------------------------
+# Configuración
+# ---------------------------------------------------------------------------
+CANTIDAD = 50_000
+SALIDA = Path("data") / "maestro_cuentas.parquet"
 
-# Vamos a generar 50,000 registros
-cantidad = 50000
+# Catálogos de valores posibles
+AREAS = [
+    "Finanzas", "Recursos Humanos", "Tecnología", "Marketing",
+    "Operaciones", "Riesgos", "Legal", "Servicio al Cliente",
+    "Comercial", "Auditoría",
+]
+ESTADOS = ["Enviado", "Pendiente", "Rechazado", "En Revisión"]
+TIPOS_CUENTA = [
+    "Fondo Voluntario", "Cesantías", "Pensión Obligatoria",
+    "Nómina", "Inversión", "Infraestructura", "Licencias",
+]
 
-# Construimos los datos aleatorios
+# ---------------------------------------------------------------------------
+# Generación
+# ---------------------------------------------------------------------------
+print(f"Generando {CANTIDAD:,} registros...")
+
 datos = {
-    "ID_Cuenta": range(1000, 1000 + cantidad),
-    "Nombre": [f"{random.choice(tipos_cuenta)} - {random.randint(100, 999)}" for _ in range(cantidad)],
-    "Area": [random.choice(areas) for _ in range(cantidad)],
-    "Estado_Envio": [random.choice(estados) for _ in range(cantidad)],
-    "Presupuesto_Solicitado": [random.randint(5000000, 500000000) for _ in range(cantidad)]
+    "ID_Cuenta": range(1000, 1000 + CANTIDAD),
+    "Nombre": [
+        f"{random.choice(TIPOS_CUENTA)} - {random.randint(100, 999)}"
+        for _ in range(CANTIDAD)
+    ],
+    "Area": [random.choice(AREAS) for _ in range(CANTIDAD)],
+    "Estado_Envio": [random.choice(ESTADOS) for _ in range(CANTIDAD)],
+    "Presupuesto_Solicitado": [
+        random.randint(5_000_000, 500_000_000) for _ in range(CANTIDAD)
+    ],
 }
 
-# Convertimos a Pandas y guardamos el CSV
 df = pd.DataFrame(datos)
-df.to_csv("data/maestro_cuentas.csv", index=False)
 
-print(f"¡Éxito! Se ha creado el archivo 'data/maestro_cuentas.csv' con {cantidad} filas.")
+# ---------------------------------------------------------------------------
+# Persistencia — Parquet con compresión Snappy (default de PyArrow)
+# ---------------------------------------------------------------------------
+SALIDA.parent.mkdir(parents=True, exist_ok=True)
+df.to_parquet(SALIDA, index=False)
+
+# Reporte
+tamaño_mb = SALIDA.stat().st_size / (1024 ** 2)
+print(
+    f"Archivo creado: {SALIDA}  |  "
+    f"{CANTIDAD:,} filas × {len(df.columns)} columnas  |  "
+    f"{tamaño_mb:.1f} MB"
+)
+print(
+    "Ventaja Parquet vs CSV: ~70 % más pequeño, lectura 5× más rápida, "
+    "preserva tipos de datos nativos."
+)

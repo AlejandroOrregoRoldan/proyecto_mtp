@@ -19,7 +19,7 @@ from data_engine import cargar_maestro, guardar_maestro
 # ---------------------------------------------------------------------------
 # Constantes
 # ---------------------------------------------------------------------------
-CSV_PATH = "data/maestro_cuentas.csv"
+DATA_PATH = "data/maestro_cuentas.parquet"
 SESSION_KEY_DF = "mc_dataframe"
 SESSION_KEY_COLS = "mc_columnas_visibles"
 SESSION_KEY_FILTRO = "mc_filtro_texto"
@@ -35,8 +35,8 @@ def _init_state() -> pd.DataFrame:
             st.session_state[SESSION_KEY_DF] = cargar_maestro()
         except FileNotFoundError:
             st.error(
-                f"No se encontró el archivo CSV en '{CSV_PATH}'. "
-                "Revisa que el volumen de Docker esté montado correctamente."
+                f"No se encontró el archivo de datos en '{DATA_PATH}'. "
+                "Ejecuta `python scripts/generador.py` para generarlo."
             )
             st.session_state[SESSION_KEY_DF] = pd.DataFrame()
         except Exception as exc:
@@ -129,7 +129,7 @@ def _render_ver_filtrar(df: pd.DataFrame) -> None:
             )
         df_filtrado = df[mask].copy()
     else:
-        df_filtrado = df.copy()
+        df_filtrado = df  # sin copia: usamos la misma referencia de session_state
 
     # --- Columnas visibles ---
     columnas_visibles = st.session_state.get(SESSION_KEY_COLS, list(df.columns))

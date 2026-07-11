@@ -3,3 +3,13 @@ __pycache__/
 .venv/
 *.pyc
 .streamlit/
+
+# Solo incluimos Parquet como formato de datos interno.
+# CSV legacy — ya no se usan, no los subas a la imagen.
+*.csv
+
+# Git y archivos de IDE
+.git/
+.gitignore
+.vscode/
+*.md
