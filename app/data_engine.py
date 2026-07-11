@@ -3,11 +3,34 @@ import pandas as pd
 import streamlit as st
 from datetime import datetime
 
+# ---------------------------------------------------------------------------
+# Constantes
+# ---------------------------------------------------------------------------
+CSV_PATH = "data/maestro_cuentas.csv"
+
+
+# ---------------------------------------------------------------------------
+# Carga / persistencia del maestro completo (usado por el CRUD)
+# ---------------------------------------------------------------------------
+@st.cache_data
+def cargar_maestro() -> pd.DataFrame:
+    """Carga completa del maestro de cuentas desde CSV (cacheada)."""
+    return pd.read_csv(CSV_PATH)
+
+
+def guardar_maestro(df: pd.DataFrame) -> None:
+    """
+    Persiste el DataFrame al CSV y limpia la caché de Streamlit
+    para que métricas, consolidado y demás vistas reflejen los cambios.
+    """
+    df.to_csv(CSV_PATH, index=False)
+    st.cache_data.clear()
+
 @st.cache_data
 def obtener_metricas_maestro():
     try:
         # 1. Leer el archivo CSV real (Simulando la lectura de BigQuery)
-        df = pd.read_csv("data/maestro_cuentas.csv")
+        df = pd.read_csv(CSV_PATH)
         
         # 2. Procesamiento con Pandas:
         # Contamos cuántas filas (cuentas) hay en total
@@ -40,7 +63,7 @@ def obtener_metricas_maestro():
 @st.cache_data
 def obtener_consolidado_areas():
     try:
-        df = pd.read_csv("data/maestro_cuentas.csv")
+        df = pd.read_csv(CSV_PATH)
         
         # Agrupamos por área y sumamos el presupuesto
         consolidado = df.groupby("Area")["Presupuesto_Solicitado"].sum().reset_index()

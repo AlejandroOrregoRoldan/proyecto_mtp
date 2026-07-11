@@ -10,6 +10,7 @@ import pandas as pd
 
 from data_engine import obtener_metricas_maestro, obtener_consolidado_areas
 from components.widgets import render_kpi_row
+from components.maestro_cuentas import render_maestro_cuentas
 
 
 # ---------------------------------------------------------------------------
@@ -35,12 +36,8 @@ def render_inicio() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Pestaña: Maestro de Cuentas
+# Pestaña: Maestro de Cuentas  (→ app/components/maestro_cuentas.py)
 # ---------------------------------------------------------------------------
-def render_maestro_cuentas() -> None:
-    """Explorador y editor del Maestro de Cuentas."""
-    st.title("📋 Maestro de Cuentas")
-    st.info("Módulo en construcción — próximamente podrás explorar y editar el maestro completo aquí.")
 
 
 # ---------------------------------------------------------------------------
