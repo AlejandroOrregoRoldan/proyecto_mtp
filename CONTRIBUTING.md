@@ -16,3 +16,13 @@ Sigue estos 5 pasos exactos cada vez que vayas a programar:
 ```bash
 git checkout master
 git pull origin master
+
+**Paso 2: Crear tu universo de trabajo**
+`git checkout -b tipo/nombre-de-tu-rama`
+
+**Paso 3: Guardar tu progreso (Puedes hacerlo varias veces)**
+`git add .`
+`git commit -m "tipo: descripción corta de lo que hiciste"`
+
+**Paso 4: Subir tu trabajo a la nube**
+`git push origin tipo/nombre-de-tu-rama`
